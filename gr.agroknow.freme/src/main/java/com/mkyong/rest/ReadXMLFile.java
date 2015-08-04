@@ -36,9 +36,10 @@ public class ReadXMLFile {
 	
 	
 	
-	public static void createAgrovoElement(String filepath /*, String uri, String label*/ ) {
+	public static void createAgrovoElement(String filepath ) {
 		
 		ClientResponse clResponse;
+		ParseResponse res = new ParseResponse();
 		Document doc = getDocument();
 		
 		String abstr;
@@ -51,7 +52,6 @@ public class ReadXMLFile {
 		//Collection<Agrovoc> agrovocs = new ArrayList<Agrovoc>();
 		//agrovocs.add(agrovc);
 		String outputClResp;
-		String out;
 			
 	    try {
 	 /*
@@ -65,125 +65,128 @@ public class ReadXMLFile {
 		doc.getDocumentElement().normalize();
 		//ags:resources
 		//Element root = doc.getDocumentElement();
-		Node root = doc.getFirstChild();
+		//Node root = doc.getFirstChild();
 		
-		NodeList listResourses = doc.getChildNodes();//list resources
-		for (int k = 0; k < listResourses.getLength(); k++) {
-		Node ags_resource = doc.getElementsByTagName("ags:resource").item(k);		
-		//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());	
-		///////////////////////////////////////////
+		NodeList listResourses = doc.getElementsByTagName("ags:resource");//doc.getChildNodes();//list resources
 		
-		NodeList listResourse = ags_resource.getChildNodes();
-		String dcterms_abst ="";
-		for (int i = 0; i < listResourse.getLength(); i++) {
-                   Node node = listResourse.item(i);
-                   System.out.println(node.getNodeName());
-		   // get the salary element, and update the value
-		   if ("dc:description".equals(node.getNodeName())) {		
-			   System.out.println(node.getNodeName() + " -dcdescription");
-			   //OKdcterms_abst = node.getTextContent();
-			   NodeList descriptionList = node.getChildNodes();
-			   
-			   for (int j = 0; j < descriptionList.getLength(); j++) {
-				   Node nodeAbstr = descriptionList.item(j);
-				   System.out.println(nodeAbstr.getNodeName() + " -dcabstractttt");
-				   if ("dcterms:abstract".equals(nodeAbstr.getNodeName())) 
-					   dcterms_abst = nodeAbstr.getTextContent();
-			   }
-			   //call the freme utilities
-			  // FREMEClientAgrovoc fremeClient= new FREMEClientAgrovoc();
+		for (int k = 0; k < listResourses.getLength(); k++) {  
+			 Node ags_resource = listResourses.item(k);		
+				//System.out.println("node name " + ags_resource.getNodeName() + "k==="+ k);
+				mylist = null;
+		
+			///////////////////////////////////////////
+			
+			NodeList listResourse = ags_resource.getChildNodes();
+			String dcterms_abst ="";
+			for (int i = 0; i < listResourse.getLength(); i++) {
+	                   Node node = listResourse.item(i);
+	                   System.out.println(node.getNodeName());
+			   if ("dc:description".equals(node.getNodeName())) {		
+				   System.out.println(node.getNodeName() + " inside if i -dcdescription");
+				   //OKdcterms_abst = node.getTextContent();
+				   NodeList descriptionList = node.getChildNodes();
+				   
+				   for (int j = 0; j < descriptionList.getLength(); j++) {
+					   Node nodeAbstr = descriptionList.item(j);
+					   System.out.println(nodeAbstr.getNodeName() + " -dcabstractttt");
+					   if ("dcterms:abstract".equals(nodeAbstr.getNodeName())) 
+						   dcterms_abst = nodeAbstr.getTextContent();
+				   }
+				   //call the freme utilities
+				  // FREMEClientAgrovoc fremeClient= new FREMEClientAgrovoc();
+				   //postText
+				  // fremeClient.postText(node.getTextContent(), "en", "en");
+
+				   /*
+				    * test
+				    * System.out.println("inside if");
+				    * System.out.println(dcterms_abst);
+				    * 
+				    * */
+			   }//dc:description
+	      
+	 
+			}
+			abstr =  dcterms_abst;//get abstract
+			
+			////////////////////////////////////////////////////
+			
+			//abstr =   getXMLabstract(ags_resource);//get abstract
+			
+			/*
+			 * 
+			 * test out
+			 * 
+			 * */
+			System.out.println("call freme client");		
+			
+			//call the freme utilities
+		    FREMEClientAgrovoc fremeClient= new FREMEClientAgrovoc();
 			   //postText
-			  // fremeClient.postText(node.getTextContent(), "en", "en");
+		    clResponse = fremeClient.postText(abstr,"en","en");	 
+		    //outputClResp = clResponse.getEntity(String.class);
 
-			   /*
-			    * test
-			    * System.out.println("inside if");
-			    * System.out.println(dcterms_abst);
-			    * 
-			    * */
-		   
-		   }
-      
- 
-		}
-		abstr =  dcterms_abst;//get abstract
+		    clResponse.bufferEntity();
+		    outputClResp = clResponse.getEntity(String.class);
+			System.out.println("clientresponse" + outputClResp);
+		    //System.out.println("ParseResponse");	    
+		    mylist = (ArrayList<String>) res.getAgrovoc(outputClResp);	    
+		    //check client response
+	     	  //  if (clResponse!=null){}    
+		    //Do some staff here with jsonld
+		    //extract agrovocs
+		    //parse content of response	    
+						    /*
+							for (Agrovoc agrvcitem : agrovocs) {
+					            // agrovoc elements
+					            Element dc_subject = doc.createElement("dc:subject");            
+					            Element newAgrovoc = doc.createElement("ags:subjectThesaurus");
+					            
+					            dc_subject.appendChild(doc.createTextNode(agrvcitem.getAgrovocUri()));
+					            newAgrovoc.appendChild(dc_subject);          
+					            ags_resource.appendChild(dc_subject);
+					        }*/
+		    
+			    for (int i = 0; i < mylist.size(); i++) {
+					System.out.println("list" + mylist.get(i).toString());			
+					// agrovoc elements
+		            Element dc_subject = doc.createElement("dc:subject");            
+		            Element newAgrovoc = doc.createElement("ags:subjectThesaurus");
+		            //enrich with agrovoc
+		            
+		            newAgrovoc.appendChild(doc.createTextNode(mylist.get(i).toString()));//doc.createTextNode(mylist.get(i).toString())
+		            dc_subject.appendChild(newAgrovoc);         
+		            ags_resource.appendChild(dc_subject);
+				}
+								
+						/*
+						NodeList nList = doc.getElementsByTagName("ags:resource");
+						for (int temp = 0; temp < nList.getLength(); temp++) {			 
+							Node nNode = nList.item(temp);	 
+							System.out.println("\nCurrent Element :" + nNode.getNodeName());	 
+							if (nNode.getNodeType() == Node.ELEMENT_NODE) {	 
+								Element eElement = (Element) nNode;
+					 
+							//	System.out.println("Staff id : " + eElement.getAttribute("id"));
+							//	System.out.println("First Name : " + eElement.getElementsByTagName("firstname").item(0).getTextContent());			
+					 
+							}//if
+						}//if		
+						*/		
+						/*if (doc.hasChildNodes()) {	 
+							printNote(doc.getChildNodes());	 
+						}*/
+			  }//listresourses 
 		
-		////////////////////////////////////////////////////
 		
-		//abstr =   getXMLabstract(ags_resource);//get abstract
 		
-		/*
-		 * 
-		 * test out
-		 * 
-		 * */
-		System.out.println("call freme client");		
 		
-		//call the freme utilities
-	    FREMEClientAgrovoc fremeClient= new FREMEClientAgrovoc();
-		   //postText
-	    clResponse = fremeClient.postText(abstr,"en","en");	 
-	    //outputClResp = clResponse.getEntity(String.class);
-
-	    clResponse.bufferEntity();
-	    outputClResp = clResponse.getEntity(String.class);
-		//System.out.println("clientresponse" + outputClResp);
-	    System.out.println("ParseResponse");
-	    
-	    ParseResponse res = new ParseResponse();
-	    mylist = (ArrayList<String>) res.getAgrovoc(outputClResp);
-	    
-	    System.out.println("mylist");   
-	    //check client response
-     	  //  if (clResponse!=null){}    
-	    //Do some staff here with jsonld
-	    //extract agrovocs
-	    //parse content of response
-	    
-	    /*
-		for (Agrovoc agrvcitem : agrovocs) {
-            // agrovoc elements
-            Element dc_subject = doc.createElement("dc:subject");            
-            Element newAgrovoc = doc.createElement("ags:subjectThesaurus");
-            
-            dc_subject.appendChild(doc.createTextNode(agrvcitem.getAgrovocUri()));
-            newAgrovoc.appendChild(dc_subject);          
-            ags_resource.appendChild(dc_subject);
-        }*/
-	    
-	    for (int i = 0; i < mylist.size(); i++) {
-			System.out.println("λιστα" + mylist.get(i).toString());			
-			// agrovoc elements
-            Element dc_subject = doc.createElement("dc:subject");            
-            Element newAgrovoc = doc.createElement("ags:subjectThesaurus");
-            //enrich with agrovoc
-            
-            newAgrovoc.appendChild(doc.createTextNode(mylist.get(i).toString()));//doc.createTextNode(mylist.get(i).toString())
-            dc_subject.appendChild(newAgrovoc);         
-            ags_resource.appendChild(dc_subject);
-		}
-	
 		
-		/*
-		NodeList nList = doc.getElementsByTagName("ags:resource");
-		for (int temp = 0; temp < nList.getLength(); temp++) {			 
-			Node nNode = nList.item(temp);	 
-			System.out.println("\nCurrent Element :" + nNode.getNodeName());	 
-			if (nNode.getNodeType() == Node.ELEMENT_NODE) {	 
-				Element eElement = (Element) nNode;
-	 
-			//	System.out.println("Staff id : " + eElement.getAttribute("id"));
-			//	System.out.println("First Name : " + eElement.getElementsByTagName("firstname").item(0).getTextContent());			
-	 
-			}//if
-		}//if		
-		*/		
-		/*if (doc.hasChildNodes()) {	 
-			printNote(doc.getChildNodes());	 
-		}*/
-		  }//listresourses
+		
+		
+		
 	    } catch (Exception e) {
-		System.out.println(e.getMessage());
+		   System.out.println(e.getMessage());
 	    }
 	 
 	  }

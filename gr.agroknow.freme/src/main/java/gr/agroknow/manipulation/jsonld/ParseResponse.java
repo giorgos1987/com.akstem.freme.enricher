@@ -64,28 +64,18 @@ import com.google.gson.JsonObject;
 
 public class ParseResponse {
 	//best to return agrovoc object
-    public static ArrayList<String>  getAgrovoc(String responseObj) throws JsonParseException, JsonMappingException, IOException{/*ClientResponse responseObj JSONObject responseObj*/
+    public static ArrayList<String>  getAgrovoc(String responseObj) throws JsonParseException, JsonMappingException, IOException, ParseException{/*ClientResponse responseObj JSONObject responseObj*/
 	//public static void main(String[] args)  {	
-		
-    	
-    	JSONParser parser = new JSONParser();	
-    	
-//    	o.put("",responseObj);
-//    	
-    	
+	
+    	JSONParser parser = new JSONParser();	 	
     	List<String> agrovocUriList = new ArrayList<String>();
-		//JSONParser parser = new JSONParser();		 
 		try {
     	 System.out.print("*********getAgrovoc**************** ");
 		//FILE Object obj = parser.parse(new FileReader("C:\\Users\\papou_000\\Desktop\\agroknow\\rest\\responseOK.json"));
+    	//FILE JSONObject jsonObject = (JSONObject) obj;
     	 Object obj =  parser.parse(responseObj) ;
          JSONObject jsonObject = (JSONObject) obj;
-			//JSONObject jsonObject = new JSONObject();	
-    	/// //////ObjectMapper mapper = new ObjectMapper();
-		/////////	JSONObject jsonObject= mapper.readValue(responseObj, JSONObject.class);
 			
-			//jsonObject.putAll((Map) responseObj);
-			//FILE JSONObject jsonObject = (JSONObject) obj;
 	
 		// loop array
 				JSONArray graph = (JSONArray) jsonObject.get("@graph");//jsonObject
@@ -102,30 +92,26 @@ public class ParseResponse {
 			          agrovocUriList.add(termUri);
 			        // valuelabel = (String) termUri.get("anchorOf");
 			          System.out.print("termURI "+ termUri + "------- ");
-			    
-			         
-			           //get label
-			         /*
-			        try{
-			         JSONArray anchorOf = (JSONArray) cntx.get("anchorOf");
-			         while(anchorOf!=null){
-			         
-			          Iterator<String> iteratorAnchor = anchorOf.iterator();
-					 while (iteratorAnchor.hasNext()) {
-
-						 Object value = iteratorAnchor.next();						 
-						 JSONObject	 label = (JSONObject) value;
-						 valuelabel = (String) label.get("@value");
-						 
-					 }
-					 
-			         }
-			        } finally  {
-		        	   
-		        	}
-			         System.out.print(termUri + " " + valuelabel + "************************* " );
-			        
-			      */   
+			    			         
+			      /*     JSONArray anchorOf = (JSONArray) cntx.get("anchorOf");
+				         				         
+				          Iterator<String> iteratorAnchor = anchorOf.iterator();
+						   while (iteratorAnchor.hasNext()) {
+	
+							 Object value = iteratorAnchor.next();						 
+							 JSONObject	 label = (JSONObject) value;
+							 valuelabel = (String) label.get("@value");
+							 agrovocUriList.add(valuelabel);
+							  System.out.print("valuelabel "+ valuelabel + "-------888888888 ");
+						   }
+				         System.out.print(termUri + " " + valuelabel + "************************* " );
+			        */
+			         /* last modification
+			          * 
+			          *  
+			          *  posible solution to copy the cntx to other object in order to cast
+			          *  
+			          *  */   
 				//}//if first  
 					
 					

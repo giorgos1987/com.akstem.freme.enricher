@@ -26,21 +26,22 @@ public class StartFreme {
 	public static void main(String[] args) {
 		
 		//ParamManager.getInstance().setParam( args ) ;
-		//File inputDirectory = new File( ParamManager.getInstance().getInputFolder() ) ;
-	//	File inputDirectory = new File( "C:\\Users\\papou_000\\Desktop\\agroknow\\test_list\\ru_test.xml") ;
-	//	FileReader fr = null ;		
-		 String filepath = "C:\\Users\\papou_000\\Desktop\\agroknow\\test_list\\ru_test.xml";
-	//	for (String filepath: inputDirectory.list() )
-		//{
-	
+		File inputDirectory = new File( "C:\\Users\\papou_000\\Desktop\\agroknow\\test_list") ;
+		
+	    String filepath = "C:\\Users\\papou_000\\Desktop\\agroknow\\test_list";
+		for (final File fileEntry : inputDirectory.listFiles() )
+		{
+//			 System.out.println(fileEntry.getName() );
+//			 System.out.println(fileEntry.getPath());
+//			 System.out.println(fileEntry.getParent());
 	      try {  	  
 		     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
      	     DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-		     Document doc = docBuilder.parse(filepath);
+		     Document doc = docBuilder.parse(fileEntry.getPath());
 		
 		     ReadXMLFile readxml = new  ReadXMLFile();
 		     readxml.setDocument(doc); //pass the xml document to parser
-		     readxml.createAgrovoElement(filepath );
+		     readxml.createAgrovoElement(fileEntry.getPath() );
 		     
 		   //call the freme utilities
 		  // FREMEClientAgrovoc fremeClient= new FREMEClientAgrovoc();
@@ -51,7 +52,7 @@ public class StartFreme {
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				javax.xml.transform.Transformer transformer = transformerFactory.newTransformer();
 				DOMSource source = new DOMSource(doc);
-				StreamResult result = new StreamResult(new File("C:\\Users\\papou_000\\Desktop\\agroknow\\test_list\\1.xml"));
+				StreamResult result = new StreamResult(new File(fileEntry.getPath()));
 				transformer.transform(source, result);
 		 
 				System.out.println("Agroknow AKStem Enrichment Done");
@@ -69,7 +70,7 @@ public class StartFreme {
 	}
 	
 	
-//	}
+ }//files
 	
 	
 }
