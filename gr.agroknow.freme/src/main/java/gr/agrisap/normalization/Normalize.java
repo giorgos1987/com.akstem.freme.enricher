@@ -1,12 +1,7 @@
-package com.mkyong.rest;
-
-import gr.agroknow.config.*;
+package gr.agrisap.normalization;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-
-import javassist.convert.Transformer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,12 +14,15 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.mkyong.rest.ReadXMLFile;
 
 
 
-public class StartFreme {
 
-	public static void main(String[] args) {
+
+
+public class Normalize {
+public static void main(String[] args) {
 		
 		//ParamManager.getInstance().setParam( args ) ;
 		File inputDirectory = new File( "C:\\Users\\papou_000\\Desktop\\agroknow\\test_list") ;
@@ -40,16 +38,10 @@ public class StartFreme {
      	     DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 		     Document doc = docBuilder.parse(fileEntry.getPath());
 		
-		     ReadXMLFile readxml = new  ReadXMLFile();
+		     Subject readxml = new  Subject();
 		     readxml.setDocument(doc); //pass the xml document to parser
-		     isAgResourse = readxml.createAgrovoElement(fileEntry.getPath() );
-		     
-		   //call the freme utilities
-		  // FREMEClientAgrovoc fremeClient= new FREMEClientAgrovoc();
-		   //postText
-		  // fremeClient.postText(node.getTextContent(), "en", "en");		
-		//http://www.mkyong.com/java/how-to-create-xml-file-in-java-dom/
-		  // write the content into xml file
+		     isAgResourse = readxml.explodeSubject(fileEntry.getPath() );
+
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				javax.xml.transform.Transformer transformer = transformerFactory.newTransformer();
 				DOMSource source = new DOMSource(doc);
@@ -74,9 +66,7 @@ public class StartFreme {
 		
 	}
 	
-	    System.out.println("Agroknow AKStem Enrichment Done");
+	    System.out.println("Agroknow AKStem Subjects Explode Done");
+  }
 
- }//files
-	
-	
 }

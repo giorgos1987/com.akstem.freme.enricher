@@ -83,7 +83,7 @@ public class ParamManager
 		
 		if ( ((args.length % 2) != 0) || !((check == 15 )||(check == 31 ) )  )
 		{
-			System.err.println( "Usage : java -jar jar.jar -input <INPUT_FOLDER> -output <OUTPUT_FOLDER> -bad <BAD_FOLDER> -set <SET_NAME>" ) ;
+			System.err.println( "Usage : java -jar <name>.jar -input <INPUT_FOLDER> -output <OUTPUT_FOLDER>" ) ;
 			System.exit( -1 ) ;
 		}
 	}

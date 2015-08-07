@@ -19,7 +19,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
 public class ReadXMLFile {
 	
@@ -33,10 +33,19 @@ public class ReadXMLFile {
 		this.doc = doc;
 	}
 	
+	/* function createAgrovoElement 
+	 * args filemath: xml file of agrisap
+	 * return void
+	 * takes as parameter filepath of xml file
+	 * read all ags:resource nodes and appends new agrovoc elements
+	 * with values based on calling freme service
+	 * 
+	 * 
+	 * 
+	 * */
 	
 	
-	
-	public static void createAgrovoElement(String filepath ) {
+	public static Boolean createAgrovoElement(String filepath ) {
 		
 		ClientResponse clResponse;
 		ParseResponse res = new ParseResponse();
@@ -44,11 +53,13 @@ public class ReadXMLFile {
 		
 		String abstr;
 		String uri="";
+		Boolean isAgResourse =false;
 		//String label="";
 		Agrovoc agrovc = new Agrovoc();
 		//agrovc.setAgrovocLabel(label);
 		agrovc.setAgrovocUri(uri);
-		ArrayList<String> mylist = new  ArrayList<String>();
+		ArrayList<String> myAgrovoURIlist = new  ArrayList<String>();
+		ArrayList<String> SubjectsList = new  ArrayList<String>();
 		//Collection<Agrovoc> agrovocs = new ArrayList<Agrovoc>();
 		//agrovocs.add(agrovc);
 		String outputClResp;
@@ -68,71 +79,59 @@ public class ReadXMLFile {
 		//Node root = doc.getFirstChild();
 		
 		NodeList listResourses = doc.getElementsByTagName("ags:resource");//doc.getChildNodes();//list resources
-		
+		//for each resource
 		for (int k = 0; k < listResourses.getLength(); k++) {  
 			 Node ags_resource = listResourses.item(k);		
 				//System.out.println("node name " + ags_resource.getNodeName() + "k==="+ k);
-				mylist = null;
-		
-			///////////////////////////////////////////
-			
-			NodeList listResourse = ags_resource.getChildNodes();
-			String dcterms_abst ="";
-			for (int i = 0; i < listResourse.getLength(); i++) {
-	                   Node node = listResourse.item(i);
-	                   System.out.println(node.getNodeName());
-			   if ("dc:description".equals(node.getNodeName())) {		
-				   System.out.println(node.getNodeName() + " inside if i -dcdescription");
-				   //OKdcterms_abst = node.getTextContent();
-				   NodeList descriptionList = node.getChildNodes();
-				   
-				   for (int j = 0; j < descriptionList.getLength(); j++) {
-					   Node nodeAbstr = descriptionList.item(j);
-					   System.out.println(nodeAbstr.getNodeName() + " -dcabstractttt");
-					   if ("dcterms:abstract".equals(nodeAbstr.getNodeName())) 
-						   dcterms_abst = nodeAbstr.getTextContent();
-				   }
-				   //call the freme utilities
-				  // FREMEClientAgrovoc fremeClient= new FREMEClientAgrovoc();
-				   //postText
-				  // fremeClient.postText(node.getTextContent(), "en", "en");
-
-				   /*
-				    * test
-				    * System.out.println("inside if");
-				    * System.out.println(dcterms_abst);
-				    * 
+			// myAgrovoURIlist = null;			
+			 NodeList listResourse = ags_resource.getChildNodes();
+			 String dcterms_abst ="";
+			//for each element
+				for (int i = 0; i < listResourse.getLength(); i++) {
+		                   Node node = listResourse.item(i);
+		                   //System.out.println(node.getNodeName());
+				   if ("dc:description".equals(node.getNodeName())) {		
+					   System.out.println(node.getNodeName() + " inside if i -dcdescription");
+					   //OKdcterms_abst = node.getTextContent();
+					   isAgResourse = true;
+					   NodeList descriptionList = node.getChildNodes();
+					   
+					   for (int j = 0; j < descriptionList.getLength(); j++) {
+						   Node nodeAbstr = descriptionList.item(j);
+						   System.out.println(nodeAbstr.getNodeName() + " -dcabstractttt");
+						   if ("dcterms:abstract".equals(nodeAbstr.getNodeName())) 
+							   dcterms_abst = nodeAbstr.getTextContent();
+					   }
+					   //call the freme utilities
+					  // FREMEClientAgrovoc fremeClient= new FREMEClientAgrovoc();
+					   //postText
+					  // fremeClient.postText(node.getTextContent(), "en", "en");
+				   }//dc:description
+		      
+				   /* explode to ; 
 				    * */
-			   }//dc:description
-	      
-	 
-			}
-			abstr =  dcterms_abst;//get abstract
-			
-			////////////////////////////////////////////////////
-			
-			//abstr =   getXMLabstract(ags_resource);//get abstract
-			
+		 
+				   
+				   
+				}//end for each element
+				
+			abstr =  dcterms_abst;//get abstract			
+			////////////////////////////////////////////////////			
+			//abstr =   getXMLabstract(ags_resource);//get abstract			
 			/*
-			 * 
 			 * test out
-			 * 
 			 * */
-			System.out.println("call freme client");		
-			
+			System.out.println("call freme client");					
 			//call the freme utilities
 		    FREMEClientAgrovoc fremeClient= new FREMEClientAgrovoc();
 			   //postText
-		    clResponse = fremeClient.postText(abstr,"en","en");	 
-		    //outputClResp = clResponse.getEntity(String.class);
-
+		    clResponse = fremeClient.postText(abstr,"en","en");	 //outputClResp = clResponse.getEntity(String.class);	    
 		    clResponse.bufferEntity();
 		    outputClResp = clResponse.getEntity(String.class);
-			System.out.println("clientresponse" + outputClResp);
-		    //System.out.println("ParseResponse");	    
-		    mylist = (ArrayList<String>) res.getAgrovoc(outputClResp);	    
+			System.out.println("clientresponse" + outputClResp); //System.out.println("ParseResponse");	    
+			myAgrovoURIlist = (ArrayList<String>) res.getAgrovoc(outputClResp);	    
 		    //check client response
-	     	  //  if (clResponse!=null){}    
+	     	//  if (clResponse!=null){}    
 		    //Do some staff here with jsonld
 		    //extract agrovocs
 		    //parse content of response	    
@@ -146,18 +145,24 @@ public class ReadXMLFile {
 					            newAgrovoc.appendChild(dc_subject);          
 					            ags_resource.appendChild(dc_subject);
 					        }*/
-		    
-			    for (int i = 0; i < mylist.size(); i++) {
-					System.out.println("list" + mylist.get(i).toString());			
+		
+			 // if(myAgrovoURIlist!=null)  {
+		    	//Create elements dc:subject with AGROVOC uri
+			    for (int i = 0; i < myAgrovoURIlist.size(); i++) {
+					//System.out.println("list" + mylist.get(i).toString());
+					System.out.println("\""+ myAgrovoURIlist.get(i).toString()+"\":" + "\"\"");
 					// agrovoc elements
 		            Element dc_subject = doc.createElement("dc:subject");            
 		            Element newAgrovoc = doc.createElement("ags:subjectThesaurus");
 		            //enrich with agrovoc
 		            
-		            newAgrovoc.appendChild(doc.createTextNode(mylist.get(i).toString()));//doc.createTextNode(mylist.get(i).toString())
+		            newAgrovoc.appendChild(doc.createTextNode(myAgrovoURIlist.get(i).toString()));//doc.createTextNode(mylist.get(i).toString())
+		            newAgrovoc.setAttribute("scheme","ags:AGROVOC");
+		            newAgrovoc.setAttribute("xml:lang","eng");
 		            dc_subject.appendChild(newAgrovoc);         
 		            ags_resource.appendChild(dc_subject);
 				}
+			 // }//check if response exists 
 								
 						/*
 						NodeList nList = doc.getElementsByTagName("ags:resource");
@@ -176,20 +181,18 @@ public class ReadXMLFile {
 						/*if (doc.hasChildNodes()) {	 
 							printNote(doc.getChildNodes());	 
 						}*/
-			  }//listresourses 
-		
-		
-		
-		
-		
-		
-		
-		
+			  }//listresourses , for each resource
+			
 	    } catch (Exception e) {
 		   System.out.println(e.getMessage());
 	    }
 	 
-	  }
+	    
+	    return isAgResourse; //return if it has description
+	    
+	    
+	    
+	  }//end 
 	 
 
 

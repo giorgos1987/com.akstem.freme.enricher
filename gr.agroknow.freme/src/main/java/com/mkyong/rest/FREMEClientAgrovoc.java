@@ -35,7 +35,7 @@ public class FREMEClientAgrovoc {
 			//Parameter definitions
 		   // input="The article shows the need to develop preparations antioxidant actions and identify the preparative form, optimal for use in a stressful poultry industry. Because the impact of negative factors emergency force feeding a bird is greatly reduced, the body experiences a deficiency of biologically active substancesand their additional introduction food is ineffection, need to find other ways of introducing biological additives. As a means of antioxidant action is proposedthe use of marsh cinquefoil, which consists of flavonoids - hesperidin, luteolin-7-glycoside, robinin, vicenin,dihydroquercetin, hyperoside";
 		    String informat= "text";
-		    String outformat = "text";
+		   // String outformat = "text";
 			source_lang= "en" ;
 			target_lang = "en";
 			String domain= "TaaS-1001";
