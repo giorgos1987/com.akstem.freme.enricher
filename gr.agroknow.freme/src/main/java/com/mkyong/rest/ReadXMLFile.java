@@ -5,8 +5,10 @@ import gr.agroknow.manipulation.jsonld.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,6 +20,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 
 //import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
@@ -59,7 +62,9 @@ public class ReadXMLFile {
 		//agrovc.setAgrovocLabel(label);
 		agrovc.setAgrovocUri(uri);
 		ArrayList<String> myAgrovoURIlist = new  ArrayList<String>();
-		ArrayList<String> SubjectsList = new  ArrayList<String>();
+	    Map<String, Agrovoc> agrovocsUri = new HashMap<String, Agrovoc>();
+
+	//	ArrayList<String> SubjectsList = new  ArrayList<String>();
 		//Collection<Agrovoc> agrovocs = new ArrayList<Agrovoc>();
 		//agrovocs.add(agrovc);
 		String outputClResp;
@@ -91,14 +96,14 @@ public class ReadXMLFile {
 		                   Node node = listResourse.item(i);
 		                   //System.out.println(node.getNodeName());
 				   if ("dc:description".equals(node.getNodeName())) {		
-					   System.out.println(node.getNodeName() + " inside if i -dcdescription");
+/////////					   System.out.println(node.getNodeName() + " inside if i -dcdescription");
 					   //OKdcterms_abst = node.getTextContent();
 					   isAgResourse = true;
 					   NodeList descriptionList = node.getChildNodes();
 					   
 					   for (int j = 0; j < descriptionList.getLength(); j++) {
 						   Node nodeAbstr = descriptionList.item(j);
-						   System.out.println(nodeAbstr.getNodeName() + " -dcabstractttt");
+///////						   System.out.println(nodeAbstr.getNodeName() + " -dcabstractttt");
 						   if ("dcterms:abstract".equals(nodeAbstr.getNodeName())) 
 							   dcterms_abst = nodeAbstr.getTextContent();
 					   }
@@ -110,9 +115,6 @@ public class ReadXMLFile {
 		      
 				   /* explode to ; 
 				    * */
-		 
-				   
-				   
 				}//end for each element
 				
 			abstr =  dcterms_abst;//get abstract			
@@ -128,9 +130,10 @@ public class ReadXMLFile {
 		    clResponse = fremeClient.postText(abstr,"en","en");	 //outputClResp = clResponse.getEntity(String.class);	    
 		    clResponse.bufferEntity();
 		    outputClResp = clResponse.getEntity(String.class);
-			System.out.println("clientresponse" + outputClResp); //System.out.println("ParseResponse");	    
+	////		System.out.println("clientresponse" + outputClResp); //System.out.println("ParseResponse");	    
 			myAgrovoURIlist = (ArrayList<String>) res.getAgrovoc(outputClResp);	    
-		    //check client response
+		    
+			//check client response
 	     	//  if (clResponse!=null){}    
 		    //Do some staff here with jsonld
 		    //extract agrovocs
@@ -150,7 +153,8 @@ public class ReadXMLFile {
 		    	//Create elements dc:subject with AGROVOC uri
 			    for (int i = 0; i < myAgrovoURIlist.size(); i++) {
 					//System.out.println("list" + mylist.get(i).toString());
-					System.out.println("\""+ myAgrovoURIlist.get(i).toString()+"\":" + "\"\"");
+			   // 	System.out.println("\""+ myAgrovoURIlist.get(i).toString()+"\":" + "\"\"");
+					System.out.println("\""+ myAgrovoURIlist.get(i).toString()+"\":");
 					// agrovoc elements
 		            Element dc_subject = doc.createElement("dc:subject");            
 		            Element newAgrovoc = doc.createElement("ags:subjectThesaurus");

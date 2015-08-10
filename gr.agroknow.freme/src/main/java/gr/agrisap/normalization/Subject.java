@@ -26,8 +26,6 @@ public class Subject {
 				
 				Document doc = getDocument();
 				Element dc_subject = null;
-				String abstr;
-				String uri="";
 				String langAttr;
 				Boolean isAgResourse =false;
 				Boolean hasSubject = false;
@@ -79,9 +77,11 @@ public class Subject {
 											   langAttr = nodeAttr.getNodeValue().toString();
 							                   dc_subject.setAttribute("xml:lang", langAttr);
 							            }
-							            dc_subject.appendChild(doc.createTextNode(subjects[k1]));//.setNodeValue(subjects[k1]);							            
-							            
-							            ags_resource.appendChild(dc_subject);
+							            dc_subject.appendChild(doc.createTextNode(subjects[k1].trim()));//.setNodeValue(subjects[k1]);							            
+							            //ags_resource.appendChild(dc_subject);OK
+							            //in order to append to next of subject
+							            ags_resource.insertBefore(dc_subject, node.getNextSibling());
+
 									}
 							   }
 							  // node.removeChild(subjectNode);
